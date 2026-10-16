@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect, useId } from 'react';
 import { motion } from 'framer-motion';
 import SplashCursor from './components/SplashCursor';
 import Silk from './components/Silk';
+import appIcon from '@/assets/app-icon.png';
 
 /* ==========================================================================
    Iconography — lightweight inline SVG so the site does not depend on the
@@ -27,16 +28,37 @@ const S = ({ className = 'size-5', children }: IconProps & { children: React.Rea
   </svg>
 );
 
-const IconLeaf = ({ className }: IconProps) => (
-  <S className={className}>
-    <path d="M11 20A7 7 0 0 1 4 13c0-5 5-9 16-9 0 11-4 16-9 16Z" />
-    <path d="M4 20c3-6 8-9 13-11" />
-  </S>
+/**
+ * Official HabitFlow app logo — a violet glass checkmark emblem on a
+ * near-black plate, so it sits flush on the site's #090909 surfaces.
+ */
+const AppLogo = ({
+  className = 'size-9',
+  alt = 'HabitFlow app icon',
+}: {
+  className?: string;
+  alt?: string;
+}) => (
+  <img
+    src={appIcon}
+    alt={alt}
+    width={512}
+    height={512}
+    className={`shrink-0 rounded-[28%] object-cover ${className}`}
+    draggable={false}
+  />
 );
 
 const IconCheck = ({ className }: IconProps) => (
   <S className={className}>
     <path d="m5 13 4 4L19 7" />
+  </S>
+);
+
+const IconUser = ({ className }: IconProps) => (
+  <S className={className}>
+    <circle cx="12" cy="8" r="3.6" />
+    <path d="M4.5 20a7.5 7.5 0 0 1 15 0" />
   </S>
 );
 
@@ -257,7 +279,7 @@ const ProgressRing = ({
 
 const FloatingTabBar = ({ active = 'today' }: { active?: 'today' | 'reports' | 'focus' | 'settings' }) => {
   const tabs = [
-    { id: 'today', label: 'Today', icon: IconLeaf },
+    { id: 'today', label: 'Today', icon: IconCheck },
     { id: 'reports', label: 'Reports', icon: IconChart },
     { id: 'focus', label: 'Focus', icon: IconTimer },
     { id: 'settings', label: 'Settings', icon: IconSliders },
@@ -305,7 +327,7 @@ const ScreenToday = () => {
             <p className="text-[12px] text-ink-secondary">Tuesday, October 24</p>
           </div>
           <div className="grid size-9 place-items-center rounded-full bg-accent-tint text-accent-soft">
-            <IconLeaf className="size-4.5" />
+            <IconUser className="size-4.5" />
           </div>
         </div>
 
@@ -666,9 +688,7 @@ const HabitFlowLanding = () => {
         >
           <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
             <div className="flex items-center gap-2.5">
-              <div className="grid size-9 place-items-center rounded-xl bg-accent-tint text-accent-soft">
-                <IconLeaf className="size-5" />
-              </div>
+              <AppLogo className="size-9" />
               <h2 className="text-xl font-bold tracking-tight text-white">HabitFlow</h2>
             </div>
 
@@ -701,36 +721,40 @@ const HabitFlowLanding = () => {
           </div>
         </motion.nav>
 
-        {/* Atmospheric violet field — static (no continuous full-screen loop),
-            kept faint so it never competes with the content on top of it. */}
+        {/* Atmospheric violet field — a calm drifting backdrop behind the hero.
+            Deliberately visible, but the content sits above it and stays the
+            clear focus. Users who ask for reduced motion get it animated too;
+            the CSS media query stops the drift for them. */}
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-[820px] overflow-hidden opacity-[0.32]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[880px] overflow-hidden"
           style={{
             zIndex: 0,
-            maskImage: 'radial-gradient(120% 80% at 50% 0%, #000 0%, transparent 72%)',
-            WebkitMaskImage: 'radial-gradient(120% 80% at 50% 0%, #000 0%, transparent 72%)',
+            opacity: 0.62,
+            maskImage: 'radial-gradient(135% 88% at 50% 4%, #000 18%, rgba(0,0,0,0.55) 58%, transparent 88%)',
+            WebkitMaskImage: 'radial-gradient(135% 88% at 50% 4%, #000 18%, rgba(0,0,0,0.55) 58%, transparent 88%)',
           }}
           aria-hidden="true"
         >
-          <Silk speed={4} scale={1} color="#2A1F4D" noiseIntensity={0.8} rotation={0} />
+          <Silk speed={6} scale={1} color="#4A35A8" noiseIntensity={0.7} rotation={0} />
         </div>
+
+        {/* Legibility scrim: keeps the headline crisp over the silk without
+            flattening the backdrop behind the phone. Horizontal on wide
+            screens (text sits left, phone right); vertical on narrow screens
+            where the copy spans the full width. */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 h-[880px] bg-[linear-gradient(180deg,rgba(9,9,9,0.55)_0%,rgba(9,9,9,0.34)_45%,rgba(9,9,9,0.1)_100%)] lg:bg-[linear-gradient(100deg,rgba(9,9,9,0.86)_0%,rgba(9,9,9,0.62)_34%,rgba(9,9,9,0.12)_60%,transparent_78%)]"
+          style={{ zIndex: 1 }}
+          aria-hidden="true"
+        />
 
         <main className="relative z-10">
           {/* Hero */}
           <section className="relative overflow-hidden px-6 pb-16 pt-28">
             <div className="mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
-                <motion.div
-                  className="mb-6 inline-flex items-center gap-2 rounded-full border border-accent-border/60 bg-accent-tint/70 px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-accent-soft"
-                  initial={prefersReducedMotion ? fadeIn.visible : fadeIn.hidden}
-                  animate={fadeIn.visible}
-                  transition={{ duration: 0.6 }}
-                >
-                  Hybrid Premium · Violet
-                </motion.div>
-
                 <motion.h1
-                  className="mb-6 text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]"
+                  className="mb-8 text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-[3.4rem]"
                   initial={prefersReducedMotion ? fadeInUp.visible : fadeInUp.hidden}
                   animate={fadeInUp.visible}
                   transition={{ duration: 0.8, ease: 'easeOut', delay: 0.15 }}
@@ -809,8 +833,11 @@ const HabitFlowLanding = () => {
                 className="glass-card relative overflow-hidden rounded-[26px] p-8 md:p-10"
                 whileHover={prefersReducedMotion ? {} : { borderColor: 'rgba(120, 93, 232, 0.35)' }}
               >
-                <div className="absolute -right-6 -top-6 text-primary/8" aria-hidden="true">
-                  <IconLeaf className="size-[140px]" />
+                <div
+                  className="pointer-events-none absolute -right-8 -top-8 opacity-[0.14]"
+                  aria-hidden="true"
+                >
+                  <AppLogo className="size-[168px]" alt="" />
                 </div>
                 <h2 className="relative mb-4 text-2xl font-bold text-white md:text-3xl">
                   Most trackers treat your routine like a game
@@ -1120,10 +1147,12 @@ const HabitFlowLanding = () => {
 
           {/* Footer */}
           <motion.footer className="border-t border-white/6 px-6 py-12 text-center">
+            <div className="mb-4 flex justify-center">
+              <AppLogo className="size-14" />
+            </div>
             <div className="mb-6 flex justify-center gap-3 text-accent-soft/70">
-              <IconLeaf className="size-6" />
-              <IconSun className="size-6" />
-              <IconMoon className="size-6" />
+              <IconSun className="size-5" />
+              <IconMoon className="size-5" />
             </div>
 
             <p className="mb-2 text-xs text-ink-muted">
