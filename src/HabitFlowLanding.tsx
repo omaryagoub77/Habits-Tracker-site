@@ -606,7 +606,7 @@ const ScreenAlarms = () => (
    Landing page
    ========================================================================== */
 
-const APP_DOWNLOAD_URL = 'https://expo.dev/accounts/mrbuilding985s-team/projects/habits-flow/builds/d0ac032c-308b-4654-8bf3-be9af307c308';
+const APP_DOWNLOAD_URL = 'https://expo.dev/accounts/mrbuilding985s-team/projects/habits-flow/builds/79d2d3b7-3218-4bb0-b2fb-4dd837a3ef08';
 
 const HabitFlowLanding = () => {
   const prefersReducedMotion = useReducedMotion();
